@@ -1,8 +1,12 @@
 <!-- 
 Real-Time HTML Editor by @aaviator42
+
+[VERTICAL LAYOUT MOD]
+
 v1.0 : 2023-07-26
 https://github.com/aaviator42/html_editor
 License: GPLv2
+
 
 Based on https://github.com/no-gravity/html_editor
 
@@ -11,252 +15,232 @@ Additions: dark mode for editor, resizable editor, tab char support
 -->
 
 <!DOCTYPE html>
+<html lang="en">
 
-<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <title>Real-Time HTML Editor</title>
 
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="robots" content="noindex, nofollow, noarchive">
-		<title>Real-Time HTML Editor</title>
-	</head>
+    <style>
+        html {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
 
-	<body>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
 
-		<style>
+        .editor-container {
+            display: flex;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
-			html
-			{
-				height: 100%;
-				padding: 0;
-				margin: 0;
-			}
+        .textarea-container {
+            flex: 1;
+            padding: 0;
+            resize: horizontal;
+            min-width: 50%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
 
-			body
-			{
-				display: flex;
-				flex-direction: column;
-				height: 100%;
-				padding: 0;
-				margin: 0;
-			}
+        textarea {
+            width: 100%;
+            height: calc(100vh - 33px);
+            margin: 0;
+            border: 0;
+            background-color: black;
+            color: white;
+            font-family: monospace;
+            tab-size: 4;
+            resize: horizontal;
+        }
 
-			textarea
-			{
-				padding: 10px;
-				resize: vertical;
-				width: calc( 100% - 20px );
-				height: 100%;
-				margin: 0;
-				border: 0;
-				background-color: black;
-				color: white;
-				font-family: monospace;
-				tab-size: 4;
-			}
+        .iframe-container {
+            flex: 1;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
 
-			textarea:focus
-			{
-				outline: none;
-			}
+        iframe {
+            border: 0;
+            width: 100%;
+            height: 100%;
+        }
 
-			iframe
-			{
-				margin: 0;
-				border: 0;
-				height: 50%;
-			}
+        .controls {
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            padding: 4px;
+            white-space: nowrap;
+            overflow-x: auto;
+            min-height: 23px;
+            background-color: purple;
+            color: white;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
 
-			.controls
-			{
-				border-top   : 1px solid black;
-				border-bottom: 1px solid black;
-				padding: 4px;
-				white-space: nowrap;
-				overflow-x: auto;
-				min-height: 23px;
-				background-color: purple;
-				color: white;
-			}
-			
+        .controls a,
+        .controls label {
+            text-decoration: none;
+            color: pink;
+            user-select: none;
+            padding: 8px;
+            cursor: pointer;
+            font-family: monospace;
+        }
 
-			.controls a, .controls label
-			{
-				text-decoration: none;
-				color: pink;
-				user-select: none;
-				padding: 8px;
-				cursor: pointer;
-				font-family: monospace;
-			}
+        .controls a:hover,
+        .controls label:hover {
+            background: mediumorchid;
+        }
 
-			.controls a:hover, .controls label:hover
-			{
-				background: mediumorchid;
-			}
-			
-			input {
-				accent-color: black;
-			}
+        input {
+            accent-color: black;
+        }
+    </style>
+</head>
 
-		</style>
+<body>
+    <div class="editor-container">
+        <div class="textarea-container">
+            <textarea id="data" spellcheck="false"></textarea>
+        </div>
+        <div class="iframe-container">
+            <iframe name="hello"></iframe>
+        </div>
+    </div>
+    <div class="controls">
+        <label>
+            <input type="checkbox" id="realtime" onclick="update()" checked />
+            realtime
+        </label>
+        | <a href="#" onClick="update()">update</a> | <a href="#" onClick="goFullscreen(false)">fullscreen</a> | <a
+            href="#" onClick="goFullscreen(true)">new fullscreen</a> |
+        <a href="#" onClick="saveAsFile()">save page</a> |
+        <a href="https://github.com/aaviator42/html_editor" target="_blank">github</a>
+    </div>
+    <script>
+        function update() {
+            let outty = window.hello.document;
+            outty.open();
+            let inny = document.getElementById("data");
+            outty.write(inny.value);
+            outty.close();
+        }
 
-<textarea id=data><!DOCTYPE html>
-<html>
-	<body>
+        function goFullscreen(newWin) {
+            if (newWin) outWin = window.open();
+            else outWin = window.open("about:blank", "html_editor");
+            outWin.focus();
+            let outty = outWin.document;
+            outty.open();
+            let inny = document.getElementById("data");
+            outty.write(inny.value);
+            outty.close();
+        }
 
-	<style>
-		body {
-			background-color: lemonchiffon;
-			font-family: Verdana;
-		}
-		span {
-			display: inline-block;
-			background: lightpink;
-			padding: 20px;
-		}
-	</style>
+        function realtime() {
+            if (!document.querySelector("#realtime").checked) return;
+            update();
+        }
 
-	<span>
-	Edit the page source on top, <br>
-	see the results on the bottom. 
-	<br><br>
-	Supports HTML, CSS and JS.
-	</span>
+        dataArea = document.getElementById("data");
+        dataArea.onkeyup = realtime;
 
-	</body>
-</html></textarea>
-  
-		<div class=controls>
-			<label>
-				<input type=checkbox id=realtime onclick="update()" checked>
-				realtime
-			</label> | 
-			<a href=# onClick="update()">update</a> |
-			<a href=# onClick="goFullscreen(false)">fullscreen</a> |
-			<a href=# onClick="goFullscreen(true)" >new fullscreen</a> |
-			<a href="#" onClick="saveAsFile()">save page</a> |
-			<a href="vert.html">vert</a> |
-			<a href="https://github.com/aaviator42/html_editor"
-			   target=_blank>github</a>
-		</div>
-		<iframe name=hello style="width: 100%; height: 100%"></iframe>
+        update();
+    </script>
+    <script>
+        //for tab char support in textarea
+        const textarea = document.getElementById("data");
 
-		<script>
+        textarea.addEventListener("keydown", function (e) {
+            if (e.key === "Tab") {
+                e.preventDefault();
 
-			function update()
-			{
-				let outty = window.hello.document;
-				outty.open();
-				let inny=document.getElementById("data");
-				outty.write(inny.value);
-				outty.close();
-			};
+                // Get the current cursor position
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
 
-			function goFullscreen(newWin)
-			{
-				if (newWin) outWin= window.open()
-				else        outWin= window.open("about:blank","html_editor");
-				outWin.focus();
-				let outty = outWin.document;
-				outty.open();
-				let inny=document.getElementById("data");
-				outty.write(inny.value);
-				outty.close();
-			}
+                // Insert a tab character at the current position
+                const tab = "\t";
+                this.value = this.value.substring(0, start) + tab + this.value.substring(end);
 
-			function realtime()
-			{
-				if (!document.querySelector("#realtime").checked) return;
-				update();
-			}
-
-			dataArea=document.getElementById("data");
-			dataArea.onkeyup=realtime;
-
-			update();
-
-		</script>
-		<script>
-		
-			//for tab char support in textarea
-			const textarea = document.getElementById('data');
-
-			textarea.addEventListener('keydown', function(e) {
-				if (e.key === 'Tab') {
-					e.preventDefault();
-
-					// Get the current cursor position
-					const start = this.selectionStart;
-					const end = this.selectionEnd;
-
-					// Insert a tab character at the current position
-					const tab = '\t';
-					this.value = this.value.substring(0, start) + tab + this.value.substring(end);
-
-					// Move the cursor to the new position after the tab
-					this.selectionStart = this.selectionEnd = start + tab.length;
-				}
-			});
-		</script>
-	    <script>
-			//save page upon ctrl+s or 'save page' button.
-			document.addEventListener("keydown", function(event) {
-				// Check if Ctrl+S or Cmd+S is pressed
-				if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-					event.preventDefault(); // Prevent the default browser save action
-					saveAsFile();
-				}
-			});
-			
-			function saveAsFile() {
-				const textareaData = document.getElementById("data").value;
-				const blob = new Blob([textareaData], { type: "text/html" });
-
-				const currentDate = new Date();
-				const day = String(currentDate.getDate()).padStart(2, "0");
-				const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-				const year = String(currentDate.getFullYear()).slice(-2);
-				const hours = String(currentDate.getHours()).padStart(2, "0");
-				const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-
-				const fileName = `code_${year}-${month}-${day}_${hours}${minutes}.html`;
-				const url = URL.createObjectURL(blob);
-
-				const downloadLink = document.createElement("a");
-				downloadLink.href = url;
-				downloadLink.download = fileName;
-
-				document.body.appendChild(downloadLink);
-				downloadLink.click();
-
-				document.body.removeChild(downloadLink);
-				URL.revokeObjectURL(url);
-			}
-
-		</script>
-		<script>
-		// persistent textarea memory
-        // Function to load the remembered text from localStorage
-        function loadRememberedText() {
-            const rememberedText = localStorage.getItem('rememberedText');
-            if (rememberedText) {
-                document.getElementById('data').value = rememberedText;
+                // Move the cursor to the new position after the tab
+                this.selectionStart = this.selectionEnd = start + tab.length;
             }
-			update();			
+        });
+    </script>
+    <script>
+        //save page upon ctrl+s or 'save page' button.
+        document.addEventListener("keydown", function (event) {
+            // Check if Ctrl+S or Cmd+S is pressed
+            if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+                event.preventDefault(); // Prevent the default browser save action
+                saveAsFile();
+            }
+        });
+
+        function saveAsFile() {
+            const textareaData = document.getElementById("data").value;
+            const blob = new Blob([textareaData], { type: "text/html" });
+
+            const currentDate = new Date();
+            const day = String(currentDate.getDate()).padStart(2, "0");
+            const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+            const year = String(currentDate.getFullYear()).slice(-2);
+            const hours = String(currentDate.getHours()).padStart(2, "0");
+            const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+
+            const fileName = `code_${year}-${month}-${day}_${hours}${minutes}.html`;
+            const url = URL.createObjectURL(blob);
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = url;
+            downloadLink.download = fileName;
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <script>
+        async function loadHtmlFromClipboard() {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+                document.getElementById("data").value = text;
+            }
+            update();
         }
 
         // Function to save the text in localStorage
         function saveText() {
-            const textToRemember = document.getElementById('data').value;
-            localStorage.setItem('rememberedText', textToRemember);
+            const textToRemember = document.getElementById("data").value;
+            localStorage.setItem("rememberedText", textToRemember);
         }
 
         // Load the remembered text when the page loads
-        loadRememberedText();
-
-        // Save the text in localStorage whenever it changes
-        document.getElementById('data').addEventListener('input', saveText);
+        loadHtmlFromClipboard();
     </script>
-	</body>
+    <script async defer></script>
+</body>
+
 </html>
